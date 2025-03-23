@@ -1,7 +1,7 @@
 package ge.mycredo.utils.config.testlisteners;
 
+import ge.mycredo.utils.config.BaseTest;
 import io.qameta.allure.Allure;
-import io.qameta.allure.Attachment;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -15,50 +15,38 @@ public class ScreenshotListener implements ITestListener {
     @Override
     public void onTestFailure(ITestResult result) {
         Object testInstance = result.getInstance();
-        WebDriver driver = getDriverFromTest(testInstance);
 
-        if (driver != null) {
+        try {
+            WebDriver driver = null;
+
             try {
-                String testMethodName = result.getMethod().getMethodName();
+                driver = (WebDriver) testInstance.getClass().getMethod("getDriver").invoke(testInstance);
+            } catch (Exception e) {
+                System.err.println("Could not get WebDriver: " + e.getMessage());
+                return;
+            }
 
-                saveScreenshot(driver, testMethodName);
+            if (driver != null) {
+                byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
 
-                byte[] screenshotBytes = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
                 Allure.addAttachment(
-                        testMethodName + "_failure",
+                        "Screenshot",
                         "image/png",
-                        new ByteArrayInputStream(screenshotBytes),
+                        new ByteArrayInputStream(screenshot),
                         "png"
                 );
 
-                System.out.println("Screenshot captured for failed test: " + testMethodName);
-            } catch (Exception e) {
-                System.err.println("Failed to capture screenshot: " + e.getMessage());
-            }
-        }
-    }
+                Allure.addAttachment(
+                        "Test method",
+                        "text/plain",
+                        new ByteArrayInputStream(result.getName().getBytes()),
+                        "txt"
+                );
 
-    @Attachment(value = "Screenshot of {testName}", type = "image/png")
-    private byte[] saveScreenshot(WebDriver driver, String testName) {
-        return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-    }
-
-    private WebDriver getDriverFromTest(Object testInstance) {
-        try {
-            try {
-                return (WebDriver) testInstance.getClass().getMethod("getDriver").invoke(testInstance);
-            } catch (NoSuchMethodException e) {
-                try {
-                    return (WebDriver) testInstance.getClass().getField("driver").get(testInstance);
-                } catch (NoSuchFieldException f) {
-                    java.lang.reflect.Field field = testInstance.getClass().getDeclaredField("driver");
-                    field.setAccessible(true);
-                    return (WebDriver) field.get(testInstance);
-                }
+                System.out.println("Screenshot captured for: " + result.getName());
             }
         } catch (Exception e) {
-            System.err.println("Could not find WebDriver: " + e.getMessage());
-            return null;
+            System.err.println("Failed to capture screenshot: " + e.getMessage());
         }
     }
 }

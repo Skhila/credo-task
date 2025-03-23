@@ -5,6 +5,7 @@ import ge.mycredo.data.Routes;
 import ge.mycredo.steps.LoginPageSteps;
 import ge.mycredo.steps.componentsteps.LanguageChangePopupSteps;
 import ge.mycredo.utils.config.BaseTest;
+import ge.mycredo.utils.config.RetryAnalyzer;
 import ge.mycredo.utils.config.testlisteners.ScreenshotListener;
 import io.qameta.allure.*;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -27,7 +28,8 @@ public class MyCredoTest extends BaseTest {
         languageChangePopupSteps = new LanguageChangePopupSteps(getDriver(), softAssert, wait);
     }
 
-    @Test(priority = 1, dataProvider = "negativeLoginDataProvider", dataProviderClass = CredoDataProvider.class)
+    @Test(priority = 1, dataProvider = "negativeLoginDataProvider", dataProviderClass = CredoDataProvider.class,
+        retryAnalyzer = RetryAnalyzer.class)
     @Severity(SeverityLevel.CRITICAL)
     @Description("Verify system behavior with invalid login credentials across different languages")
     @Story("As a user, I should see appropriate error messages in my selected language when I enter invalid credentials")
@@ -52,7 +54,7 @@ public class MyCredoTest extends BaseTest {
         softAssert.assertAll();
     }
 
-    @Test(priority = 2)
+    @Test(priority = 2, retryAnalyzer = RetryAnalyzer.class)
     @Severity(SeverityLevel.CRITICAL)
     @Description("Verify system behavior with empty username")
     @Story("As a user, I should not be able to attempt login with an empty username to maintain security")
@@ -65,7 +67,7 @@ public class MyCredoTest extends BaseTest {
         softAssert.assertAll();
     }
 
-    @Test(priority = 3)
+    @Test(priority = 3, retryAnalyzer = RetryAnalyzer.class)
     @Severity(SeverityLevel.CRITICAL)
     @Description("Verify system behavior with empty password")
     @Story("As a user, I should not be able to attempt login with an empty password to maintain security")
@@ -77,6 +79,4 @@ public class MyCredoTest extends BaseTest {
 
         softAssert.assertAll();
     }
-
-
 }
