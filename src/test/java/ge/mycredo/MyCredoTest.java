@@ -46,6 +46,7 @@ public class MyCredoTest extends BaseTest {
                 .fillUserName(userName)
                 .fillPassword(password)
                 .clickLoginButton()
+                .verifyErrorIsVisible()
                 .verifyErrorText(errorText)
                 .clickErrorCloseButton();
 
