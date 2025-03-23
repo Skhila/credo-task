@@ -5,7 +5,7 @@ This project contains automated tests for the MyCredo login functionality. It ve
 ## Project Structure
 
 ```
-mycredo-automation/
+credo-task/
 ├── src/
 │   └── main/
 │       └── java/
