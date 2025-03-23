@@ -6,10 +6,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
+import org.testng.annotations.*;
 import org.testng.asserts.SoftAssert;
 
 import java.time.Duration;
@@ -21,7 +18,7 @@ public abstract class BaseTest {
 
     @Parameters("browser")
     @BeforeMethod(alwaysRun = true)
-    public void setUp(@Optional(Config.DEFAULT_BROWSER) String browser) throws Exception {
+    public void setUpConfig(@Optional(Config.DEFAULT_BROWSER) String browser) throws Exception {
         if (browser.equalsIgnoreCase("chrome")) {
             WebDriverManager.chromedriver().setup();
             driver = new ChromeDriver();
